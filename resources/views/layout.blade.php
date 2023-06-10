@@ -34,6 +34,14 @@
 <body class="hold-transition sidebar-mini">
     @include('sweetalert::alert')
 
+    @php
+        use App\Models\Borrow;
+
+        $verif_notif = Borrow::where('status', 'requested')->count();
+        $out_notif = Borrow::where('must_return_date', '<=', date('Y-m-d'))->where('status', 'borrowed')->count();
+        $member_out_notif = Borrow::where('must_return_date', '<=', date('Y-m-d'))->where('status', 'borrowed')->where('member_id', Auth::user()->id)->count();
+    @endphp
+
     <!-- Site wrapper -->
     <div class="wrapper">
         <!-- Navbar -->
@@ -61,9 +69,7 @@
                             {{ Auth::user()->role }}
                         </div>
                         <div class="dropdown-divider"></div>
-                        {{-- <a href="{{ route('index') }}" class="dropdown-item">Home</a> --}}
-                        <div class="dropdown-divider"></div>
-                        {{-- <a href="{{ route('setting.index') }}" class="dropdown-item">Edit Profile</a> --}}
+                        <a href="{{ route('setting.index') }}" class="dropdown-item">Edit Profile</a>
                         <div class="dropdown-divider"></div>
                         <form action="/logout" method="post">
                             @csrf
@@ -116,18 +122,63 @@
                                 <p>Book</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('verify') }}" class="nav-link @yield('verify')">
+                                <i class="fa-solid fa-check-to-slot"></i>
+                                <p>
+                                    Verify
+                                    @if ($verif_notif)
+                                        <span class="right badge badge-danger">{{ $verif_notif }}</span>
+                                    @endif
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('return-book') }}" class="nav-link @yield('return-book')">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                <p>Return</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('request-history') }}" class="nav-link @yield('request-history')">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                <p>History</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('out-off-date') }}" class="nav-link @yield('out-off-date')">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <p>
+                                    Out Off Date 
+                                    @if ($out_notif)
+                                        <span class="right badge badge-danger">{{ $out_notif }}</span>
+                                    @endif
+                                </p>
+                            </a>
+                        </li>
 
                         @endif
 
-                        @if (Auth::user()->role == 'user')
+                        @if (Auth::user()->role == 'member')
 
                         <li class="nav-header">
                             Member
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('book.index') }}" class="nav-link @yield('book')">
+                            <a href="{{ route('book-list') }}" class="nav-link @yield('book-list')">
                                 <i class="fa-solid fa-book"></i>
-                                <p>Book</p>
+                                <p>Book List</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('history') }}" class="nav-link @yield('history')">
+                                <i class="fa-solid fa-list"></i>
+                                <p>
+                                    History
+                                    @if ($member_out_notif)
+                                        <span class="right badge badge-danger">{{ $member_out_notif }}</span>
+                                    @endif
+                                </p>
                             </a>
                         </li>
                             

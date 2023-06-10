@@ -1,13 +1,10 @@
-@extends('admin.layout')
-@php
-    use App\Models\CategoryBlog;
-@endphp
+@extends('layout')
 
-@section('blog')
+@section('book')
 active
 @endsection
 @section('title')
-Blog
+Book
 @endsection
 
 @section('content')
@@ -24,45 +21,29 @@ Blog
 </ul>
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <!-- Main content -->
         <section class="content">
-            <!-- Main content -->
-            <section class="content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="pull-right">
-                                        {{-- <a class="btn btn-success" href="{{ route('blog.create') }}"> Create</a>
-                                        --}}
-                                        <a href="#" class="btn btn-danger" id="deleteAllSelectedTip"
-                                            onclick="location.reload()">Delete Selected</a>
-                                    </div>
-                                    {{-- @if ($message = Session::get('success'))
-                <div class="alert alert-success">
-                    <p>{{ $message }}</p>
-                                </div>
-                                @endif --}}
-                            </div>
-                            <!-- /.card-header -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
                             <div class="card-body">
 
                                 <table id="example" class="display" style="width:100%">
                                     <thead>
                                         <tr>
-                                            <th><input type="checkbox" id="chkCheckAll" /></th>
+                                            <th>ISBN</th>
                                             <th>Image</th>
                                             <th>Title</th>
-                                            <th>Category</th>
+                                            <th>Author</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($blog as $b)
+                                        @foreach ($book as $b)
                                         <tr>
-                                            <td><input type="checkbox" name="ids" class="checkBoxClass"
-                                                    value="{{ $b->id }}" /></td>
-                                            {{-- <td> substr($b->content, 0, 150) </td> --}}
+                                            <td>{{ $b->id }}</td>
                                             <td>
                                                 <div style="width: 200px;">
                                                     <img src="{{ asset('storage/' . $b->image) }}" alt="No Image"
@@ -70,16 +51,14 @@ Blog
                                                 </div>
                                             </td>
                                             <td>{{ $b->title }}</td>
-                                            @php
-                                                $cb = CategoryBlog::where('id', $b->category)->first();
-                                            @endphp
-                                            <td>{{ $cb->category }}</td>
+                                            <td>{{ $b->author }}</td>
+                                            <td>{{ $b->status }}</td>
 
                                             <td>
-                                                <form action="{{ route('blog.destroy',$b->id) }}" method="POST">
+                                                <form action="{{ route('book.destroy',$b->id) }}" method="POST">
 
                                                     <a class="btn btn-primary"
-                                                        href="{{ route('blog.edit',$b->id) }}">Edit</a>
+                                                        href="{{ route('book.edit',$b->id) }}">Edit</a>
 
                                                     @csrf
                                                     @method('DELETE')
@@ -94,10 +73,11 @@ Blog
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th></th>
+                                            <th>ISBN</th>
                                             <th>Image</th>
                                             <th>Title</th>
-                                            <th>Category</th>
+                                            <th>Author</th>
+                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
@@ -110,125 +90,122 @@ Blog
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
     </div>
-    <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-
-    </section>
-</div>
-<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-    <section class="create">
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="pull-right">
-                                    {{-- <a class="btn btn-danger" href="{{ route('blog.index') }}"> Back</a> --}}
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <section class="create">
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    @endif
                                 </div>
-                                @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <strong>Whoops!</strong> There were some problems with your input.<br><br>
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                @endif
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
+                                <!-- /.card-header -->
+                                <div class="card-body">
 
 
-                                <form action="{{ route('blog.store') }}" method="POST"
-                                    enctype="multipart/form-data">
-                                    @csrf
+                                    <form action="{{ route('book.store') }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
 
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <div class="form-group">
-                                                <strong>Image</strong>
-                                                <img class="img-preview img-fluid mb-3 col-sm-5">
-                                                <div class="input-group mb-3">
-                                                    <input type="file" class="form-control" @error('image') is-invalid
-                                                        @enderror name="image" id="image" onchange="previewImage()">
-                                                    @error('image')
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <strong>Image</strong>
+                                                    <img class="img-preview img-fluid mb-3 col-sm-5">
+                                                    <div class="input-group mb-3">
+                                                        <input type="file" class="form-control" @error('image') is-invalid
+                                                            @enderror name="image" id="image" onchange="previewImage()">
+                                                        @error('image')
+                                                        <div class="invalid-feedback">
+                                                            {{ $message }}
+                                                        </div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <strong>ISBN</strong>
+                                                    <input type="number" name="id" class="form-control" @error('id')
+                                                        is-invalid @enderror placeholder="ISBN" value="{{ old('id') }}">
+                                                    @error('id')
                                                     <div class="invalid-feedback">
                                                         {{ $message }}
                                                     </div>
                                                     @enderror
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <div class="form-group">
-                                                <strong>Title</strong>
-                                                <input type="text" name="title" class="form-control" @error('title')
-                                                    is-invalid @enderror placeholder="Title" value="{{ old('title') }}">
-                                                @error('title')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <strong>Title</strong>
+                                                    <input type="text" name="title" class="form-control" @error('title')
+                                                        is-invalid @enderror placeholder="Title" value="{{ old('title') }}">
+                                                    @error('title')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
                                                 </div>
-                                                @enderror
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <strong>Description</strong>
+                                                    <textarea name="desc" id="contents" cols="30" rows="10">{{ old('desc') }}</textarea>
+                                                    <script>
+                                                        CKEDITOR.replace('contents');
+                                                    </script>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="form-group">
+                                                    <strong>Author</strong>
+                                                    <input type="text" name="author" class="form-control" @error('author')
+                                                        is-invalid @enderror placeholder="Author" value="{{ old('author') }}">
+                                                    @error('author')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="status" value="avaiable">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 text-center">
+                                                <button type="submit" class="btn btn-primary">Submit</button>
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <div class="form-group">
-                                                <strong>Description</strong>
-                                                <textarea name="desc" id="contents" cols="30" rows="10">{{ old('desc') }}</textarea>
-                                                <script>
-                                                    CKEDITOR.replace('contents');
 
-                                                </script>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12 mt-3">
-                                            <div class="form-group">
-                                                <strong>Category</strong>
-                                                <select class="form-control" name="category">
-                                                    @foreach($categoryblog as $cb)
-                                                        <option value="{{$cb->id}}">{{$cb->category}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                          </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                              <div class="form-group">
-                                                  <strong>Keyword</strong><br>
-                                                  <textarea name="keyword" id="contents" style="width: 100%" cols="30" rows="5">{{ old('keyword') }}</textarea>
-                                              </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                              <div class="form-group">
-                                                  <strong>Tag</strong><br>
-                                                  <textarea name="tag" id="contents" style="width: 100%" cols="30" rows="5">{{ old('tag') }}</textarea>
-                                              </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </div>
+                                    </form>
 
-                                </form>
-
+                                </div>
+                                <!-- /.card-body -->
                             </div>
-                            <!-- /.card-body -->
+                            <!-- /.card -->
                         </div>
-                        <!-- /.card -->
+                        <!-- /.col -->
                     </div>
-                    <!-- /.col -->
+                    <!-- /.row -->
                 </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container-fluid -->
+                <!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
         </section>
-        <!-- /.content -->
-    </section>
-</div>
+    </div>
 </div>
 
 

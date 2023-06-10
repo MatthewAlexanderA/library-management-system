@@ -3,85 +3,153 @@
 namespace App\Http\Controllers;
 
 use App\Models\Borrow;
+use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BorrowController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Borrow $borrow)
+    // Start staff function
+    public function index(Borrow $borrow) // Verify request page
     {
-        $borrow = Borrow::latest()->get();
+        $borrows = Borrow::latest()
+            ->with('book')
+            ->with('member')
+            ->where('status', 'requested')
+            ->get();
 
-        return view('admin.borrow.index', compact('borrow'));
+        return view('staff.borrow.index', compact('borrows'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required',
-            'desc' => 'required',
-            'category' => 'required',
-            'keyword' => 'required',
-            'tag' => 'required',
-        ]);
-
-        $validated['date'] = date('Y-m-d');
-
-        Borrow::create($validated);
-
-        return redirect()->route('borrow.index')
-            ->with('success', 'Add Success!');
-    }
-
-    public function edit($id)
+    public function inputDate($id)
     {
         $borrow = Borrow::find($id);
 
-        return view('admin.borrow.edit', compact('borrow'));
+        return view('staff.borrow.verify', compact('borrow'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Borrow  $borrow
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    
+    public function verify(Request $request, $id)
     {
         $rules = [
-            'title' => 'required',
-            'desc' => 'required',
-            'category' => 'required',
-            'keyword' => 'required',
-            'tag' => 'required',
+            'return_date' => 'required',
         ];
-
         $validated = $request->validate($rules);
+
+        $validated['borrow_date'] = date('Y-m-d');
+        $validated['status'] = 'borrowed';
 
         $borrow = Borrow::find($id);
 
         $borrow->update($validated);
 
-        return redirect()->route('borrow.index')
-            ->with('success', 'Update Success!');
+        return redirect()->route('verify')
+            ->with('success', 'Request Accepted!');
     }
 
-    public function destroy(Borrow $borrow)
+    public function reject($id)
     {
-        $borrow->delete($borrow->id);
+        $validated['status'] = 'rejected';
+        $updateBook['status'] = 'available';
 
-        return redirect()->route('borrow.index')
-            ->with('success', 'Delete Success!');
+        $borrow = Borrow::find($id);
+        $book = Book::find($borrow->isbn);
+
+        $book->update($updateBook);
+        $borrow->update($validated);
+
+        return redirect()->route('verify')
+            ->with('success', 'Request Rejected!');
     }
+
+    public function return(Borrow $borrow)
+    {
+        $borrows = Borrow::latest()
+            ->with('book')
+            ->with('member')
+            ->where('status', 'borrowed')
+            ->get();
+
+        return view('staff.borrow.return', compact('borrows'));
+    }
+    
+    public function confirmReturn($id)
+    {
+        $validated['status'] = 'returned';
+        $validated['return_date'] = date('Y-m-d');
+
+        $updateBook['status'] = 'available';
+
+        $borrow = Borrow::find($id);
+        $book = Book::find($borrow->isbn);
+
+        $book->update($updateBook);
+        $borrow->update($validated);
+
+        return redirect()->route('return-book')
+            ->with('success', 'Return Confirmed!');
+    }
+
+    public function allHistory()
+    {
+        $borrows = Borrow::where('status', '!=', 'requested')
+            ->with('book')
+            ->with('member')
+            ->latest()
+            ->get();
+
+        return view('staff.borrow.history', compact('borrows'));
+    }
+
+    public function outOffDate()
+    {
+        $borrows = Borrow::where('must_return_date', '<=', date('Y-m-d'))
+            ->where('status', 'borrowed')
+            ->with('book')
+            ->with('member')
+            ->latest()
+            ->get();
+
+        return view('staff.borrow.out', compact('borrows'));
+    }
+    // End staff function
+
+    // Start member function
+    public function list() 
+    {
+        $books = Book::orderBy('status', 'ASC')->get();
+        // Check if the member already borrow a book
+        $check = Borrow::where('status', 'borrowed')
+            ->where('member_id', Auth::user()->id)  
+            ->count();
+
+        return view('member.list', compact('books', 'check'));
+    }
+
+    public function request($id)
+    {
+        $validated['isbn'] = $id;
+        $validated['member_id'] = Auth::user()->id;
+        $validated['status'] = 'requested';
+
+        $updateBook['status'] = 'borrowed';
+
+        $book = Book::find($validated['isbn']);
+
+        $book->update($updateBook);
+        Borrow::create($validated);
+
+        return redirect()->route('request-history')
+            ->with('success', 'Request Success!');
+    }
+
+    public function history()
+    {
+        $histories = Borrow::where('member_id', Auth::user()->id)
+            ->with('book')
+            ->latest()
+            ->get();
+
+        return view('member.history', compact('histories'));
+    }
+    // End member function
 }

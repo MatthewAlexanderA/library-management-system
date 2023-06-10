@@ -12,6 +12,6 @@ class Book extends Model
     protected $guarded = [];
 
     public function borrow() {
-        return $this->hasOne('App\Borrow');
+        return $this->hasMany(Borrow::class, 'id', 'isbn');
     }
 }

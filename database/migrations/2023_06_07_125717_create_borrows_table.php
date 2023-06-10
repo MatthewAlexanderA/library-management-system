@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('borrows', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('isbn')->constrained('books', 'isbn')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('member_name');
-            $table->date('borrow_date');
-            $table->date('retun_date');
+            $table->foreignId('isbn')->constrained('books')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('member_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->date('borrow_date')->nullable();
+            $table->date('return_date')->nullable();
+            $table->enum('status', ['returned', 'borrowed', 'requested', 'rejected']);
             $table->timestamps();
         });
     }

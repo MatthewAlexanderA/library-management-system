@@ -12,6 +12,10 @@ class Borrow extends Model
     protected $guarded = [];
 
     public function book() {
-        return $this->belongsTo('App\Book');
+        return $this->belongsTo(Book::class, 'isbn', 'id');
+    }
+
+    public function member() {
+        return $this->belongsTo(User::class, 'member_id', 'id');
     }
 }

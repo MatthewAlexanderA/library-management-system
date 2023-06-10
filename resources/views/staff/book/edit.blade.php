@@ -1,10 +1,10 @@
-@extends('admin.layout')
+@extends('layout')
 
-@section('blog')
+@section('book')
 active
 @endsection
 @section('title')
-Blog
+Book
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@ Blog
                 <div class="card">
                     <div class="card-header">
                         <div class="pull-right">
-                            <a class="btn btn-danger" href="{{ route('blog.index') }}"> Back</a>
+                            <a class="btn btn-danger" href="{{ route('book.index') }}"> Back</a>
                         </div>
                         @if ($errors->any())
                         <div class="alert alert-danger">
@@ -34,7 +34,7 @@ Blog
                     <div class="card-body">
 
 
-                        <form action="{{ route('blog.update',$blog->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('book.update',$book->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             @method('PUT')
@@ -43,9 +43,9 @@ Blog
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
                                         <strong>Image</strong>
-                                        <input type="hidden" name="oldImage" value="{{ $blog->image }}">
-                                        @if ($blog->image)
-                                        <img src="{{ asset('storage/' . $blog->image) }}" class="img-preview img-fluid mb-3 col-sm-5 d-block">
+                                        <input type="hidden" name="oldImage" value="{{ $book->image }}">
+                                        @if ($book->image)
+                                        <img src="{{ asset('storage/' . $book->image) }}" class="img-preview img-fluid mb-3 col-sm-5 d-block">
                                         @else
                                         <img class="img-preview img-fluid mb-3">
                                         @endif
@@ -61,8 +61,19 @@ Blog
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
+                                        <strong>ISBN</strong>
+                                        <input type="number" name="id" class="form-control" @error('id') is-invalid @enderror placeholder="ISBN" value="{{$book->id}}">
+                                        @error('id')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <div class="form-group">
                                         <strong>Title</strong>
-                                        <input type="text" name="title" class="form-control" @error('title') is-invalid @enderror placeholder="Title" value="{{$blog->title}}">
+                                        <input type="text" name="title" class="form-control" @error('title') is-invalid @enderror placeholder="Title" value="{{$book->title}}">
                                         @error('title')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -73,32 +84,21 @@ Blog
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
                                         <strong>Description</strong>
-                                        <textarea name="desc" id="contents" cols="30" rows="10">{{ $blog->desc }}</textarea>
+                                        <textarea name="desc" id="contents" cols="30" rows="10">{{ $book->desc }}</textarea>
                                         <script>
                                             CKEDITOR.replace('contents');
                                         </script>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12 mt-3">
-                                  <div class="form-group">
-                                      <strong>Category</strong>
-                                      <select class="form-control" name="category">
-                                          @foreach($categoryblog as $cb)
-                                              <option value="{{$cb->id}}" @if($blog->category == $cb->id)selected @endif>{{$cb->category}}</option>
-                                          @endforeach
-                                      </select>
-                                  </div>
-                                </div>
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
-                                        <strong>Keyword</strong><br>
-                                        <textarea name="keyword" id="" style="width: 100%" cols="30" rows="10">{{ $blog->keyword }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <strong>Tag</strong><br>
-                                        <textarea name="tag" id="" style="width: 100%" cols="30" rows="10">{{ $blog->tag }}</textarea>
+                                        <strong>Author</strong>
+                                        <input type="text" name="author" class="form-control" @error('author') is-invalid @enderror placeholder="Author" value="{{$book->author}}">
+                                        @error('author')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-12 text-center">

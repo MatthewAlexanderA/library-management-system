@@ -18,7 +18,7 @@ class BookController extends Controller
     {
         $book = Book::latest()->get();
 
-        return view('admin.book.index', compact('book'));
+        return view('staff.book.index', compact('book'));
     }
 
     /**
@@ -31,11 +31,10 @@ class BookController extends Controller
     {
         $validated = $request->validate([
             'image' => 'image|file|required',
+            'id' => 'required',
             'title' => 'required',
             'desc' => 'required',
-            'category' => 'required',
-            'keyword' => 'required',
-            'tag' => 'required',
+            'author' => 'required',
         ]);
 
         $image = $request->file('image')->store('post-images/book');
@@ -43,8 +42,6 @@ class BookController extends Controller
         $validated['image'] = $image;
 
         $validated['slug'] = Str::slug($request->title);
-
-        $validated['date'] = date('Y-m-d');
 
         Book::create($validated);
 
@@ -56,7 +53,7 @@ class BookController extends Controller
     {
         $book = Book::find($id);
 
-        return view('admin.book.edit', compact('book'));
+        return view('staff.book.edit', compact('book'));
     }
 
     /**
@@ -69,11 +66,11 @@ class BookController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [
+            'image' => 'image|file',
+            'id' => 'required',
             'title' => 'required',
             'desc' => 'required',
-            'category' => 'required',
-            'keyword' => 'required',
-            'tag' => 'required',
+            'author' => 'required',
         ];
 
         $validated = $request->validate($rules);
@@ -88,7 +85,6 @@ class BookController extends Controller
         $validated['slug'] = Str::slug($request->title);
 
         $book = Book::find($id);
-
         $book->update($validated);
 
         return redirect()->route('book.index')
