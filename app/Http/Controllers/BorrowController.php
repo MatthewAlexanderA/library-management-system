@@ -31,7 +31,7 @@ class BorrowController extends Controller
     public function verify(Request $request, $id)
     {
         $rules = [
-            'return_date' => 'required',
+            'must_return_date' => 'required',
         ];
         $validated = $request->validate($rules);
 
@@ -118,7 +118,8 @@ class BorrowController extends Controller
     {
         $books = Book::orderBy('status', 'ASC')->get();
         // Check if the member already borrow a book
-        $check = Borrow::where('status', 'borrowed')
+        $check = Borrow::where('status', '=', 'borrowed')
+            ->orWhere('status', '=', 'requested')
             ->where('member_id', Auth::user()->id)  
             ->count();
 

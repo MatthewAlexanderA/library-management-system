@@ -69,6 +69,8 @@
                             {{ Auth::user()->role }}
                         </div>
                         <div class="dropdown-divider"></div>
+                        <a href="{{ route('index') }}" class="dropdown-item">Home</a>
+                        <div class="dropdown-divider"></div>
                         <a href="{{ route('setting.index') }}" class="dropdown-item">Edit Profile</a>
                         <div class="dropdown-divider"></div>
                         <form action="/logout" method="post">
@@ -215,11 +217,6 @@
             <strong>2023 &copy; Library Management System.</strong>
         </footer>
 
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
 

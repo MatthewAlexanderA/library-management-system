@@ -58,15 +58,16 @@ Book List
 
                                             <td>
                                                 @if ($check || $book->status != 'available')
-                                                    <button class="btn btn-success disabled" disabled>Request</button>
+                                                    <button class="mb-1 btn btn-success disabled" disabled>Request</button>
                                                 @else
                                                     <form action="{{ route('borrow-request', $book->id) }}" method="POST">
                                                         @csrf
                                                         @METHOD('POST')
 
-                                                        <button type="submit" class="btn btn-success" >Request</button>
+                                                        <button type="submit" class="mb-1 btn btn-success" >Request</button>
                                                     </form>
                                                 @endif
+                                                <a href="{{ route('show-book', $book->slug) }}" class="btn btn-primary">View</a>
                                             </td>
 
                                         </tr>

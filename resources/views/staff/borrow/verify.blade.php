@@ -41,9 +41,9 @@ Verify Request
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                     <div class="form-group">
-                                        <strong>Return Date</strong>
-                                        <input type="date" name="return_date" class="form-control" @error('return_date') is-invalid @enderror placeholder="Return Date" value="{{$borrow->return_date}}">
-                                        @error('return_date')
+                                        <strong>Must Return Date</strong>
+                                        <input type="date" name="must_return_date" class="form-control" @error('must_return_date') is-invalid @enderror placeholder="Must Return Date" value="{{$borrow->must_return_date}}">
+                                        @error('must_return_date')
                                         <div class="invalid-feedback">
                                             {{ $message }}
                                         </div>

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowController;
 
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingController;
 
@@ -22,7 +23,8 @@ use Illuminate\Auth\Events\Logout;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', [LoginController::class, 'user'])->name('login')->middleware('guest');
+Route::get('/', [PageController::class, 'index'])->name('index');
+Route::get('show-book/{slug}', [BookController::class, 'showBook'])->name('show-book');
 
 Route::middleware(['auth'])->group(function () {
     

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Borrow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -101,5 +103,21 @@ class BookController extends Controller
 
         return redirect()->route('book.index')
             ->with('success', 'Delete Success!');
+    }
+
+    public function showBook(Book $book, $slug)
+    {
+        $book = Book::where('slug', $slug)->first();
+        // Check if the member already borrow a book
+        if (Auth::user()) {
+            $check = Borrow::where('status', '=', 'borrowed')
+                ->orWhere('status', '=', 'requested')
+                ->where('member_id', Auth::user()->id)
+                ->count();
+        } else {
+            $check = 0;
+        } 
+
+        return view('member.show', compact('book', 'check'));
     }
 }
