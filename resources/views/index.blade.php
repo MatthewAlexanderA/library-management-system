@@ -16,10 +16,9 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <span class="navbar-nav me-auto mb-2 mb-lg-0"></span>
-            <form class="d-flex ms-3 mb-1" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-light" type="submit">Search</button>
-            </form>
+              <form action="{{ url()->current() }}" autocomplete="off" method="get">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+              </form>
             <div class="ms-3">
               @if (Auth::user())
                   <a href="{{ route('dashboard.index') }}" class="btn btn-primary">Dashboard</a>
@@ -52,6 +51,7 @@
                     </div>
                 </div>
             @endforeach
+            {!! $books->links() !!}
         </div>
       </div>
     

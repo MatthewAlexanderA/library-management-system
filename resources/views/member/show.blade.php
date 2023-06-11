@@ -10,27 +10,26 @@
     @include('sweetalert::alert')
     
     <nav class="navbar navbar-expand-lg bg-dark bg-body-tertiary" data-bs-theme="dark">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="{{ route('index') }}">Library Management System</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <span class="navbar-nav me-auto mb-2 mb-lg-0"></span>
-            <form class="d-flex ms-3 mb-1" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-light" type="submit">Search</button>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ route('index') }}">Library Management System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <span class="navbar-nav me-auto mb-2 mb-lg-0"></span>
+            <form action="{{ route('index') }}" autocomplete="off" method="get">
+              <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
             </form>
-            <div class="ms-3">
-              @if (Auth::user())
-                  <a href="{{ route('dashboard.index') }}" class="btn btn-primary">Dashboard</a>
-              @else
-                  <a href="{{ route('login') }}" class="btn btn-success">Login</a>
-              @endif
-            </div>
+          <div class="ms-3">
+            @if (Auth::user())
+                <a href="{{ route('dashboard.index') }}" class="btn btn-primary">Dashboard</a>
+            @else
+                <a href="{{ route('login') }}" class="btn btn-success">Login</a>
+            @endif
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
 
       <div class="content m-5 p-5 card">
         <div class="row">
@@ -39,7 +38,7 @@
             </div>  
             <div class="col-lg-9 col-md-9 col-sm-12">
               <h4>{{ $book->title }}</h4> 
-              <p>By: {{ $book->author }}</p> 
+              <p>By: {{ $book->author }} | ISBN: {{ $book->id }}</p> 
               {!! $book->desc !!}
               <p>Status:
                 @switch($book->status)
